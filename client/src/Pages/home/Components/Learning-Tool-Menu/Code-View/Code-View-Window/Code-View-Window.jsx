@@ -2,15 +2,13 @@
 //import React, { useState, useRef, useEffect } from "react";
 //import "./Code-View-Window.css";
 
-
-const CodeViewWindow = (props) => {
-
+const CodeViewWindow = ({ selectedLanguageCode }) => {
     return (
-        <>
-            <h5 className="card-title">{props.selectedLanguage}</h5>
-            <p className="card-text">{props.selectedLanguageCode}</p>
-        </>
+        <div className="code-view-container" style={{ whiteSpace: "pre-wrap" }}>
+            {/* Render the processed code as HTML */}
+            <div dangerouslySetInnerHTML={{ __html: selectedLanguageCode }} />
+        </div>
     );
-}
+};
 
 export default CodeViewWindow;

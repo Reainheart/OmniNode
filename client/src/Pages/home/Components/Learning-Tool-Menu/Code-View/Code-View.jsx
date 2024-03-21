@@ -10,6 +10,13 @@ const CodeView = () => {
         "Select a language to view the example."
     );
 
+    // Adjusted processData to handle \\n and \\t from the API response
+    const processData = (code) => {
+        return code
+            .replace(/\\n/g, "<br>") // Replace \\n with <br>
+            .replace(/\\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;"); // Replace \\t with four non-breaking spaces
+    };
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -26,7 +33,7 @@ const CodeView = () => {
                 );
                 setSelectedLanguageCode(
                     languageData
-                        ? languageData.Example
+                        ? processData(languageData.Example)
                         : `No example code found for ${selectedLanguage}`
                 );
             } catch (error) {
@@ -37,7 +44,7 @@ const CodeView = () => {
             }
         };
         fetchData();
-    }, [selectedLanguage]); // This will re-fetch when selectedLanguage changes
+    }, [selectedLanguage]);
 
     return (
         <>
@@ -50,7 +57,6 @@ const CodeView = () => {
                 </div>
                 <div className="card-body">
                     <CodeViewWindow
-                        selectedLanguage={selectedLanguage}
                         selectedLanguageCode={selectedLanguageCode}
                     />
                 </div>
