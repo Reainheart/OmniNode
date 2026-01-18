@@ -61,20 +61,21 @@ const Array = ({ name, x, y, text, getNewObject, selected, toggleSelection, getP
     };
 
     const removeArrayNode = (remove_id) => {
+        
         setArrayData(prevNodes => prevNodes.filter(node => node.id !== remove_id))
     };
 
     return (
-        <div>
+        <div style={{ position: "absolute", left: x, top: y }}>
             {selected && (
-                <div className="array-options" style={{ left: x - 36, top: y }}>
+                <div className="array-options" style={{ left: -36, top: 0 }}>
                     <button onClick={triggerEdit}>✎</button>
                     <button onClick={removeMe}>␥</button>
                     <button onClick={getPointer}>→</button>
                 </div>
             )}
             <input
-                style={{ left: x - 50, top: y - 50 }}
+                style={{ left: -50, top: -50, position: "absolute" }}
                 hidden={inputIsHidden}
                 className="changeContent"
                 type="text"
@@ -85,9 +86,10 @@ const Array = ({ name, x, y, text, getNewObject, selected, toggleSelection, getP
             <div
                 className={selected ? "selected-array" : "array"}
                 style={{
-                    left: x,
-                    top: y,
-                    border: (selected ? "4px solid white" : "1px solid gray")
+                    border: (selected ? "4px solid white" : "1px solid gray"),
+                    minWidth: 120,
+                    minHeight: 60,
+                    background: "#fafbfc"
                 }}
             >
                 <h3 onClick={handleArrayClick}>
@@ -97,7 +99,9 @@ const Array = ({ name, x, y, text, getNewObject, selected, toggleSelection, getP
                     <button onClick={addEmptyArrayNode}>Add new Index</button>
                 </div>
                 <div className="array-container">
-
+                    {arrayData.length === 0 && (
+                        <div style={{ color: '#bbb', textAlign: 'center', padding: 8 }}>Empty Array</div>
+                    )}
                     {arrayData.map((node, index) => (
                         <ArrayNode
                             key={node.id}

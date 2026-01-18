@@ -13,7 +13,7 @@ const structures = [
     { name: "Queue" },
 ];
 
-function Toolbar({ setSelectStructure }) {
+function Toolbar({ setSelectStructure, onZoomIn, onZoomOut, onPan, activeMode }) {
     const [activeStructure, setActiveStructure] = useState("Node");
 
     const handleClick = (structureName) => {
@@ -28,16 +28,40 @@ function Toolbar({ setSelectStructure }) {
                     key={structure.name}
                     onClick={() => handleClick(structure.name)}
                     className={
-                        activeStructure === structure.name ? "active" : ""
+                        activeStructure === structure.name && activeMode === "none"
+                            ? "active"
+                            : ""
                     }
                 >
                     {structure.name}
                 </button>
             ))}
+            <button
+                onClick={onZoomIn}
+                className={activeMode === "zoom-in" ? "active" : ""}
+            >
+                Zoom +
+            </button>
+            <button
+                onClick={onZoomOut}
+                className={activeMode === "zoom-out" ? "active" : ""}
+            >
+                Zoom -
+            </button>
+            <button
+                onClick={onPan}
+                className={activeMode === "pan" ? "active" : ""}
+            >
+                Pan
+            </button>
         </div>
     );
 }
 Toolbar.propTypes = {
     setSelectStructure: PropTypes.func.isRequired,
+    onZoomIn: PropTypes.func.isRequired,
+    onZoomOut: PropTypes.func.isRequired,
+    onPan: PropTypes.func.isRequired,
+    activeMode: PropTypes.string.isRequired,
 };
 export default Toolbar;

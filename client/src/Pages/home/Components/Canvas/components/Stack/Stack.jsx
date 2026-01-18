@@ -80,16 +80,16 @@ const Stack = ({
     };
 
     return (
-        <div>
+        <div style={{ position: "absolute", left: x, top: y }}>
             {selected && (
-                <div className="stack-options" style={{ left: x - 36, top: y }}>
+                <div className="stack-options" style={{ left: -36, top: 0 }}>
                     <button onClick={triggerEdit}>✎</button>
                     <button onClick={removeMe}>␥</button>
                     <button onClick={getPointer}>→</button>
                 </div>
             )}
             <input
-                style={{ left: x - 50, top: y - 50 }}
+                style={{ left: -50, top: -50, position: "absolute" }}
                 hidden={inputIsHidden}
                 className="changeContent"
                 type="text"
@@ -100,9 +100,10 @@ const Stack = ({
             <div
                 className={`stack ${selected ? "selected" : ""}`}
                 style={{
-                    left: x,
-                    top: y,
                     border: selected ? "4px solid white" : "1px solid gray",
+                    minWidth: 120,
+                    minHeight: 60,
+                    background: "#fafbfc"
                 }}
             >
                 <h3 onClick={handleStackClick}>{content}</h3>
@@ -111,6 +112,9 @@ const Stack = ({
                     <button onClick={popFromStack}>Pop</button>
                 </div>
                 <div className="stack-container">
+                    {stackData.length === 0 && (
+                        <div style={{ color: '#bbb', textAlign: 'center', padding: 8 }}>Empty Stack</div>
+                    )}
                     {stackData.map((node, index) => (
                         <ArrayNode
                             key={node.id}

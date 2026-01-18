@@ -1,0 +1,63 @@
+.linked-list-root {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background: #f8f8ff;
+  border: 2px solid #b0b0b0;
+  border-radius: 12px;
+  padding: 12px 18px;
+  box-shadow: 0 2px 8px #0001;
+  min-width: 220px;
+}
+.linked-list-root.selected {
+  border-color: #0074d9;
+  box-shadow: 0 0 0 2px #0074d955;
+}
+.linked-list-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.linked-list-node {
+  min-width: 48px;
+  min-height: 36px;
+  background: #fff;
+  border: 2px solid #888;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  font-size: 1rem;
+  margin: 0 2px;
+  padding: 0 10px;
+}
+.linked-list-node.head {
+  background: #e0f7fa;
+  border-color: #00bcd4;
+}
+.linked-list-node.tail {
+  background: #ffe0e0;
+  border-color: #e57373;
+}
+.linked-list-arrow {
+  font-size: 1.5rem;
+  color: #888;
+  margin: 0 2px;
+}
+.linked-list-controls {
+  display: flex;
+  gap: 8px;
+}
+.linked-list-controls button {
+  background: #f0f0f0;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+  padding: 2px 10px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: background 0.2s;
+}
+.linked-list-controls button:hover {
+  background: #e0eaff;
+}

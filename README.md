@@ -7,9 +7,12 @@ Welcome to the tool that we couldn't find so we decided to build it for our Jr P
 ## Requirements 
 - [NodeJS](https://nodejs.org/en)
 To check your version of node you can run the following commands
-```
+
+## Running Client
+```bash
 node -v
 npm -v
+cd client
+npm install
+npm run dev
 ```
-
-### Optional

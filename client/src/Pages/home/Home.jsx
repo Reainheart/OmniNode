@@ -2,58 +2,129 @@ import { useState, useEffect, useRef } from "react";
 import "./home.css";
 import Header from "./../header/Header";
 
-import CanvasComponent from "./Components/Canvas/CanvasComponent"
-import LearningToolMenu from "./Components/Learning-Tool-Menu/Learning-Tool-Menu"
-import Toolbar from "./Components/Toolbar/Toolbar";
+import ToolbarContainer from "./Components/Toolbar/ToolbarContainer";
+import Canvas from "./Components/Canvas/Canvas";
+import { NODE_RADIUS } from "./Components/Canvas/constants";
+
 
 const Home = () => {
     const headerHeight = 96;
     const toolbarHeight = 46;
 
-    const [objectToDraw, setObjectToDraw] = useState('Node');
-    const [canvasObjects, setCanvasObjects] = useState([]);
-    const [canvasWidth, setcanvasWidth] = useState(window.innerWidth * 6 / 8);
-    const [canvasHeight, setcanvasHeight] = useState(window.innerHeight - headerHeight - toolbarHeight);
+    const [canvasWidth, setCanvasWidth] = useState(window.innerWidth);
+    const [canvasHeight, setCanvasHeight] = useState(
+        window.innerHeight - headerHeight - toolbarHeight
+    );
+    const [activeMode, setActiveMode] = useState("");
 
-    // Map to track all objects and Interacts with CodeView
-    const drawnCanvasObjects = useRef(new Map())
-    const [learningToolMenuWidth, setlearningToolMenuWidth] = useState(window.innerWidth - canvasWidth);
-    const [learningToolMenuHeight, setlearningToolMenuHeight] = useState(window.innerHeight - headerHeight - toolbarHeight);
+    // Zoom and pan state (lifted)
+    const [zoom, setZoom] = useState(1);
+    const [pan, setPan] = useState({ x: 0, y: 0 });
 
-    const onReSize = () => {
-        setcanvasWidth(window.innerWidth * 6 / 8);
-        setcanvasHeight(window.innerHeight - headerHeight - toolbarHeight);
-        setlearningToolMenuWidth(window.innerWidth - canvasWidth);
-        setlearningToolMenuHeight(window.innerHeight - headerHeight - toolbarHeight);
-    };
-    const handleClick = () => {
-        var allObjects = Array.from(drawnCanvasObjects.current.values());
-        var getCanvasObjects = (objects) => {
-            var uniqueObjects = []
-            objects.forEach(element => {
-                if (!uniqueObjects.includes(element.type) && element.type != 'Pointer') {
-                    uniqueObjects.push(element.type)
-                }
-            });
-            return uniqueObjects;
-        }
-        setCanvasObjects(Array.from(getCanvasObjects(allObjects)));
+    const onResize = () => {
+        setCanvasWidth(window.innerWidth);
+        setCanvasHeight(window.innerHeight - headerHeight - toolbarHeight);
     };
 
     useEffect(() => {
-        // set canvas size based on the window size
-        window.addEventListener("resize", onReSize);
-
-        return () => window.removeEventListener("resize", onReSize);
+        window.addEventListener("resize", onResize);
+        return () => window.removeEventListener("resize", onResize);
     }, []);
 
+    // Structure selection state
+    const [selectedStructure, setSelectedStructure] = useState("Node");
+
+    // Node/Array/Stack/Queue creation handler
+    const handleCanvasClick = (x, y, dispatch) => {
+        switch (selectedStructure) {
+            case "Node":
+                dispatch({ type: "ADD_NODE", x: x - NODE_RADIUS, y: y - NODE_RADIUS });
+                break;
+            case "Array":
+                dispatch({ type: "ADD_ARRAY", x, y });
+                break;
+            case "Stack":
+                dispatch({ type: "ADD_STACK", x, y });
+                break;
+            case "Queue":
+                dispatch({ type: "ADD_QUEUE", x, y });
+                break;
+            case "Linked List":
+                dispatch({ type: "ADD_LINKED_LIST", x, y });
+                break;
+            case "Tree":
+                dispatch({ type: "ADD_TREE", x, y });
+                break;
+            default:
+                break;
+        }
+    };
+
+    const handleZoomIn = () => {
+        setZoom(z => Math.max(0.2, Math.min(z * 1.2, 3)));
+    };
+    const handleZoomOut = () => {
+        setZoom(z => Math.max(0.2, Math.min(z / 1.2, 3)));
+    };
+    const handlePan = () => {
+        setPan(p => ({ x: p.x + 40, y: p.y }));
+    };
+
+    // --- Pan drag logic ---
+    const panDragRef = useRef({ dragging: false, lastX: 0, lastY: 0 });
+
+    const handlePointerDown = (e) => {
+        if (activeMode !== "pan" || e.button !== 0) return;
+        panDragRef.current.dragging = true;
+        panDragRef.current.lastX = e.clientX;
+        panDragRef.current.lastY = e.clientY;
+        window.addEventListener("pointermove", handlePointerMove);
+        window.addEventListener("pointerup", handlePointerUp);
+    };
+    const handlePointerMove = (e) => {
+        if (!panDragRef.current.dragging) return;
+        const dx = e.clientX - panDragRef.current.lastX;
+        const dy = e.clientY - panDragRef.current.lastY;
+        setPan((p) => ({ x: p.x + dx, y: p.y + dy }));
+        panDragRef.current.lastX = e.clientX;
+        panDragRef.current.lastY = e.clientY;
+    };
+    const handlePointerUp = () => {
+        panDragRef.current.dragging = false;
+        window.removeEventListener("pointermove", handlePointerMove);
+        window.removeEventListener("pointerup", handlePointerUp);
+    };
+
+    // Minimap jump handler
+    const handleMinimapJump = (worldX, worldY) => {
+        // Set pan so that the viewport is centered on (worldX, worldY)
+        setPan({
+            x: -worldX * zoom,
+            y: -worldY * zoom,
+        });
+    };
+
     return (
-        <div onClick={handleClick}>
+        <div className="home-root">
             <Header />
-            <Toolbar setSelectStructure={setObjectToDraw} />
+            <ToolbarContainer
+                setActiveMode={setActiveMode}
+                onZoomIn={handleZoomIn}
+                onZoomOut={handleZoomOut}
+                onPan={handlePan}
+                setSelectStructure={setSelectedStructure}
+                activeMode={activeMode}
+            />
             <div className="flex-container">
-                <CanvasComponent className="canvas" drawnCanvasObjects={drawnCanvasObjects} objectToDraw={objectToDraw} HomeWidth={canvasWidth} HomeHeight={canvasHeight} />
-                <LearningToolMenu className="learning-tool-menu" HomeWidth={learningToolMenuWidth} HomeHeight={learningToolMenuHeight} CanvasObjects={canvasObjects} />
+                <Canvas
+                    width={canvasWidth}
+                    height={canvasHeight}
+                    zoom={zoom}
+                    pan={pan}
+                    onCanvasClick={handleCanvasClick}
+                    onCanvasPointerDown={handlePointerDown}
+                    onMinimapJump={handleMinimapJump}
+                />
             </div>
         </div>
     );

@@ -1,0 +1,21 @@
+.canvasRoot {
+  position: relative;
+  overflow: hidden;
+  touch-action: none;
+}
+
+/* Pointers under everything */
+.pointerLayer {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+/* Nodes above pointers */
+.node,
+.selected-node,
+.node-options,
+.changeContent,
+.point {
+  z-index: 2;
+}

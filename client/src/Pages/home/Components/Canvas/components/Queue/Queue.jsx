@@ -67,16 +67,16 @@ const Queue = ({ name, x, y, text, getNewObject, selected, toggleSelection, getP
     };
 
     return (
-        <div>
+        <div style={{ position: "absolute", left: x, top: y }}>
             {selected && (
-                <div className="queue-options" style={{ left: x - 36, top: y }}>
+                <div className="queue-options" style={{ left: -36, top: 0 }}>
                     <button onClick={triggerEdit}>✎</button>
                     <button onClick={removeMe}>␥</button>
                     <button onClick={getPointer}>→</button>
                 </div>
             )}
             <input
-                style={{ left: x - 50, top: y - 50 }}
+                style={{ left: -50, top: -50, position: "absolute" }}
                 hidden={inputIsHidden}
                 className="changeContent"
                 type="text"
@@ -87,9 +87,10 @@ const Queue = ({ name, x, y, text, getNewObject, selected, toggleSelection, getP
             <div
                 className={`queue ${selected ? 'selected-queue' : ''}`}
                 style={{
-                    left: x,
-                    top: y,
                     border: selected ? "4px solid white" : "1px solid gray",
+                    minWidth: 120,
+                    minHeight: 60,
+                    background: "#fafbfc"
                 }}>
                 <h3 onClick={handleQueueClick}>
                     {content}
@@ -99,7 +100,9 @@ const Queue = ({ name, x, y, text, getNewObject, selected, toggleSelection, getP
                     <button onClick={popFromQueue}>Dequeue</button>
                 </div>
                 <div className="queue-container">
-
+                    {queueData.length === 0 && (
+                        <div style={{ color: '#bbb', textAlign: 'center', padding: 8 }}>Empty Queue</div>
+                    )}
                     {queueData.map((node, index) => (
                         <ArrayNode
                             key={node.id}
@@ -111,7 +114,6 @@ const Queue = ({ name, x, y, text, getNewObject, selected, toggleSelection, getP
                             removeMe={() => removeArrayNode(node.id)}
                         />
                     ))}
-
                 </div>
             </div>
         </div>
